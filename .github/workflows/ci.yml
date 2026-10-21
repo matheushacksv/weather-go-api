@@ -35,7 +35,9 @@ jobs:
 
       - name: Run migrations
         run: |
-            for f in database/migrations/*.up.sql; do psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f "$f" done;
+            for f in database/migrations/*.up.sql; do 
+              psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f "$f"
+            done
 
       - name: Vet
         run: go vet ./...
