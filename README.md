@@ -1,4 +1,4 @@
-![CI](https://github.com/matheushacksv/weather_api/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/matheushacksv/weather-go-api/actions/workflows/ci.yml/badge.svg)
 # Weather API Go with users
 
 ## Description
