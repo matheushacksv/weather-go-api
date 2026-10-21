@@ -25,7 +25,7 @@ func (u UserHandler) Create(c *gin.Context) {
 
 	repository := UserRepository{u.Pool}
 
-	if err := data.Prepare(); err != nil {
+	if err := data.Prepare("register"); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -35,7 +35,7 @@ func (u UserHandler) Create(c *gin.Context) {
 		data,
 	)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not create user"})
+		c.JSON(http.StatusConflict, gin.H{"error": "could not create user"})
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{"user": user})
@@ -67,7 +67,7 @@ func (u UserHandler) List(c *gin.Context) {
 
 	users, err := repository.ListUsers(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "error to retrieve users"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "error to retrieve users"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"users": users})
@@ -86,7 +86,7 @@ func (u UserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if err := data.Prepare(); err != nil {
+	if err := data.Prepare("update"); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"errors": err.Error()})
 		return
 	}

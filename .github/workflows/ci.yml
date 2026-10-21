@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: weather_test
+        ports:
+          - 5432:5432
+        options:
+         --health-cmd pg_isready
+         --health-interval 5s
+         --health-timeout 5s
+         --health-retries 5
+    env:
+      TEST_DATABASE_URL: postgres://test:test@localhost:5432/weather_test?sslmode=disable
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Run migrations
+        run: |
+            for f in database /migrations/*.up.sql; do psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f "$f" done
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        run: go test -v ./...

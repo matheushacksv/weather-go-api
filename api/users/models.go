@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/badoux/checkmail"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // User represents the user of the system
@@ -19,10 +20,11 @@ type User struct {
 }
 
 // Prepare formats and validate the required fields for User
-func (u *User) Prepare() error {
-	u.format()
-
-	if err := u.validate(); err != nil {
+func (u *User) Prepare(stage string) error {
+	if err := u.validate(stage); err != nil {
+		return err
+	}
+	if err := u.format(stage); err != nil {
 		return err
 	}
 
@@ -30,12 +32,12 @@ func (u *User) Prepare() error {
 }
 
 // validate checks if the required fields is filled
-func (u *User) validate() error {
-	if u.Name == "" {
+func (u *User) validate(stage string) error {
+	if strings.TrimSpace(u.Name) == "" {
 		return errors.New("Name is required")
 	}
 
-	if u.Email == "" {
+	if strings.TrimSpace(u.Email) == "" {
 		return errors.New("Email is required")
 	}
 
@@ -43,7 +45,7 @@ func (u *User) validate() error {
 		return errors.New("E-mail valid format")
 	}
 
-	if u.Password == "" {
+	if strings.TrimSpace(u.Password) == "" && stage == "register" {
 		return errors.New("Password is required")
 	}
 
@@ -51,7 +53,7 @@ func (u *User) validate() error {
 }
 
 // format remove the blanks spaces and format username
-func (u *User) format() {
+func (u *User) format(stage string) error {
 	u.Name = strings.TrimSpace(u.Name)
 
 	if u.Username == "" {
@@ -60,4 +62,15 @@ func (u *User) format() {
 	}
 
 	u.Email = strings.TrimSpace(u.Email)
+
+	if stage == "register" {
+		hashedPassword, err := bcrypt.GenerateFromPassword(
+			[]byte(u.Password), bcrypt.DefaultCost,
+		)
+		if err != nil {
+			return err
+		}
+		u.Password = string(hashedPassword)
+	}
+	return nil
 }

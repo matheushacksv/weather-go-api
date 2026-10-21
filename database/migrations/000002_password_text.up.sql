@@ -1,0 +1,3 @@
+ALTER TABLE users 
+    ALTER COLUMN password TYPE TEXT,
+    ALTER COLUMN email TYPE TEXT;

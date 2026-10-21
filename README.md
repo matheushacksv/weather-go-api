@@ -1,3 +1,4 @@
+![CI](https://github.com/matheushacksv/weather_api/actions/workflows/ci.yml/badge.svg)
 # Weather API Go with users
 
 ## Description
@@ -46,4 +47,3 @@ PORT=3002
 | PUT | `/users/:ID` | Update a user |
 | DELETE | `/users/:ID` | Delete a user |
 | GET | `/weather?latitude={lat}&longitude={long}` | Current weather from Open-Meteo |
-

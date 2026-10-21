@@ -38,7 +38,7 @@ func (u UserRepository) ListUsers(ctx context.Context) ([]User, error) {
 	}
 	defer rows.Close()
 
-	var users []User
+	users := []User{}
 
 	for rows.Next() {
 		var user User
